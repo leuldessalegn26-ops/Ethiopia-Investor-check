@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Investor check for Ethiopian sectors</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f5f3;--surface:#fff;--ink:#14201c;--muted:#56655f;--line:#d5ddd9;--good:#0f7a55;--watch:#a86a00;--weak:#b3402f;--accent:#0f5c45;--track:#e3e9e6;--land:#dbe6e0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1714;--surface:#17221e;--ink:#e8f0ec;--muted:#9bb0a7;--line:#2b3a34;--good:#4cc795;--watch:#e0a63a;--weak:#ef8a76;--accent:#4cc795;--track:#26342e;--land:#22332c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1714;--surface:#17221e;--ink:#e8f0ec;--muted:#9bb0a7;--line:#2b3a34;--good:#4cc795;--watch:#e0a63a;--weak:#ef8a76;--accent:#4cc795;--track:#26342e;--land:#22332c;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 "IBM Plex Sans",system-ui,sans-serif}
+main{max-width:740px;margin:0 auto;padding:26px 18px 56px}
+h1,h2,.big,.val{font-family:"Bricolage Grotesque","IBM Plex Sans",system-ui,sans-serif;letter-spacing:-.01em}
+h1{font-size:clamp(1.65rem,6vw,2.3rem);line-height:1.15;margin:0 0 8px}
+h2{font-size:1.2rem;margin:34px 0 6px}
+p{margin:0 0 10px}
+.note{font-size:.88rem;color:var(--muted)}
+.by{font-weight:500;color:var(--accent);margin-bottom:14px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0}
+@media (max-width:520px){.tabs{grid-template-columns:1fr 1fr}}
+.tab{font:500 .92rem/1.25 inherit;font-family:inherit;padding:11px 8px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;min-height:48px}
+.tab[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.verdict{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:10px;padding:16px}
+.big{font-size:1.45rem;font-weight:700;line-height:1.2;margin:0 0 6px}
+.meters{display:grid;gap:12px;margin:14px 0 2px}
+.meter b{display:flex;justify-content:space-between;font-weight:500;font-size:.95rem}
+.bar{height:12px;background:var(--track);border-radius:6px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s ease}
+.mapbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px}
+svg{width:100%;height:auto;display:block}
+.land{fill:var(--land);stroke:var(--muted);stroke-width:1.2;stroke-linejoin:round}
+.hub{cursor:pointer}
+.hub circle{fill:var(--accent);stroke:var(--surface);stroke-width:2;transition:r .15s}
+.hub.on circle{fill:var(--watch);r:9}
+.hub text{font:500 9px "IBM Plex Sans",sans-serif;fill:var(--ink)}
+.hub:focus-visible circle{stroke:var(--ink);stroke-width:3}
+.hub:focus{outline:none}
+.info{margin-top:8px;padding:10px 12px;background:var(--bg);border-radius:8px;min-height:64px;font-size:.93rem}
+.info b{display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:480px){.grid{grid-template-columns:1fr}}
+label.f{display:block;font-size:.9rem;color:var(--muted)}
+label.f span{display:block;margin-bottom:3px}
+input[type=number]{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+input:focus-visible,.tab:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.stress{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin-top:14px}
+.row{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:10px}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-weight:500}
+.val{font-size:1.25rem;font-weight:700}
+.mid{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.tag{font-size:.82rem;font-weight:500;padding:2px 9px;border-radius:99px;border:1px solid currentColor}
+.good{color:var(--good)}.watch{color:var(--watch)}.weak{color:var(--weak)}
+.row .bar i.good{background:var(--good)}.row .bar i.watch{background:var(--watch)}.row .bar i.weak{background:var(--weak)}
+.row p{margin:8px 0 0;font-size:.9rem;color:var(--muted)}
+.check{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.check input{margin-top:5px;width:18px;height:18px;accent-color:var(--accent);flex:none}
+ul.risks{padding-left:20px;margin:8px 0}
+ul.risks li{margin-bottom:8px}
+footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){.bar i,.hub circle{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>Is this business worth backing? Check it for its sector.</h1>
+<p class="by">Prepared by Leul M.</p>
+<p class="note">Pick a sector. Targets, checks, risks and the map all change to match it.</p>
+<div class="tabs" id="tabs"></div>
+
+<section class="verdict" aria-live="polite">
+  <p class="big" id="vTitle"></p>
+  <p id="vText"></p>
+  <div class="meters">
+    <div class="meter"><b><span>Profitability</span><span id="pPct"></span></b><div class="bar"><i id="pBar"></i></div></div>
+    <div class="meter"><b><span>Visibility</span><span id="vPct"></span></b><div class="bar"><i id="vBar"></i></div></div>
+  </div>
+</section>
+
+<h2>Where to look in Ethiopia</h2>
+<p class="note">Tap a point to see what to ask there. The outline is simplified, not to scale.</p>
+<div class="mapbox">
+  <svg viewBox="0 0 300 232" role="img" aria-label="Simplified map of Ethiopia with sector hubs"><path class="land" id="land"/><g id="hubs"></g></svg>
+  <div class="info" id="info"></div>
+</div>
+
+<h2>Enter the business’s yearly numbers</h2>
+<p class="note">Use one currency. The figures are a sector example, so replace them with the real ones.</p>
+<div class="grid" id="inputs"></div>
+<div class="stress">
+  <label for="st"><b>Stress test:</b> costs of goods rise by <b id="stv">0%</b> and prices can’t follow</label>
+  <input id="st" type="range" min="0" max="40" step="5" value="0">
+  <p class="note" id="stn" style="margin:6px 0 0"></p>
+</div>
+
+<h2>Profitability against the sector</h2>
+<div id="results"></div>
+<p class="note" id="read"></p>
+
+<h2>Visibility: what can the business prove?</h2>
+<p class="note">Tick only what you have seen evidence of, such as a live report or an audited statement.</p>
+<div id="checks"></div>
+
+<h2>Sector risks to price in</h2>
+<ul class="risks" id="risks"></ul>
+
+<footer class="note"><b>Prepared by Leul M.</b> This is a screening aid, not investment advice. Targets are general rules of thumb and vary by company size and year. A strong score means the business deserves a closer look, including audited accounts, contracts and legal review.</footer>
+</main>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var fmt=function(n,d){return n.toLocaleString("en-US",{maximumFractionDigits:d||0})};
+var IDS=["rev","cogs","opex","inv","ar","ap","cash","debt"];
+var LAB=["Revenue (sales)","Cost of goods sold","Operating expenses","Inventory on hand","Customers owe you","You owe suppliers","Cash and bank","Short-term loans"];
+// metrics: label, decimals, unit, higher-is-better, hint
+var M=[
+ ["Gross margin",1,"%",1,"What is left of each sale after the direct cost of goods."],
+ ["Operating margin",1,"%",1,"Profit from running the business, before interest and tax."],
+ ["Inventory days",0," days",0,"How long stock sits before it sells."],
+ ["Receivable days",0," days",0,"How long customers take to pay."],
+ ["Cash cycle",0," days",0,"Inventory days plus receivable days minus payable days: how long cash is locked up."],
+ ["Current ratio",2,"×",1,"Short-term assets against short-term debts. Below 1 is a warning."]
+];
+var UNI=["Stock, sales and cash are recorded daily in one system, not scattered spreadsheets.","Monthly financial statements are ready within 10 days of month-end.","An external auditor reviews the accounts every year."];
+// sectors: name, example numbers, targets [good,watch] per metric, sector checks, risks, reading note, hubs [name,lon,lat,tip]
+var S={
+med:{n:"General manufacturing",x:[20e6,13e6,4e6,3.5e6,3e6,2.5e6,1.2e6,1.5e6],
+ t:[[30,20],[10,5],[90,150],[60,100],[120,180],[1.5,1]],
+ c:["Each product has a costed bill of materials, so the true cost per unit is known.","Production capacity and actual utilisation are measured every month.","Scrap, waste and rework are recorded and traced to their cause."],
+ r:["Imported raw materials and spare parts are paid in foreign currency.","Power cuts or machine breakdowns can stop production and delay orders.","Large buyers can pay slowly, which stretches cash."],
+ rd:"Stock days run long because raw materials are often imported, so check how much cash sits in stock. Low capacity use and slow-paying buyers are the usual profit and cash risks.",
+ h:[["Addis Ababa",38.74,9.03,"Main industrial cluster. Ask what share of capacity is used and what the true cost per unit is."],["Hawassa",38.48,7.06,"Industrial park region. Ask about power reliability and room to expand."],["Dire Dawa",41.87,9.6,"Logistics gateway. Ask how imported inputs are cleared and what delays cost."],["Mekelle",39.47,13.5,"Northern market. Ask how products reach customers here and what transport costs."]]},
+sup:{n:"Supermarket",x:[40e6,33e6,5.5e6,2.4e6,.3e6,2.8e6,1.5e6,1e6],
+ t:[[18,12],[4,2],[30,50],[7,20],[30,60],[1,.7]],
+ c:["Daily sales are tracked per branch and per product category.","Shrinkage (theft, spoilage, expiry) is measured and reported.","Supplier terms, discounts and promotions are recorded in the system."],
+ r:["Rising prices squeeze margins when shelf prices are slow to follow.","Spoilage and theft can quietly eat several points of margin.","Rent and location decide each branch’s fate. Check lease terms."],
+ rd:"Thin margins are normal; the engine is fast stock turnover and supplier credit. A current ratio near 1 can be healthy here if stock moves quickly.",
+ h:[["Addis Ababa",38.74,9.03,"Largest customer base. Ask for sales per branch per square metre and each lease’s terms."],["Hawassa",38.48,7.06,"Fast-growing regional city. Ask how supply is delivered and what transport costs."],["Bahir Dar",37.39,11.59,"Regional market. Ask what share of sales is cash versus credit."],["Dire Dawa",41.87,9.6,"Eastern trade city. Ask about competition from informal and cross-border sellers."]]},
+cof:{n:"Coffee export",x:[30e6,26e6,2.2e6,4.5e6,3e6,2.5e6,1e6,3e6],
+ t:[[15,8],[6,3],[60,100],[45,75],[90,140],[1.3,1]],
+ c:["Each export lot is traceable to its origin, washing station and supplier.","Contract prices, shipping documents and payments received are matched.","Foreign-currency receipts and their conversion to birr are recorded."],
+ r:["World coffee prices swing, so check how much volume is sold on fixed contracts.","Rules on export proceeds and currency conversion can change cash flow.","A few suppliers or buyers may account for most volume. Ask for concentration."],
+ rd:"Exporters run thin margins on large volume, so small cost shocks matter. Check price risk and how fast shipments turn into cash.",
+ h:[["Sidama–Yirgacheffe",38.2,6.15,"Famous origin zone. Ask whether each lot can be traced to a cooperative or washing station."],["Jimma",36.83,7.67,"Large producing area. Ask for supplier contracts and purchase records."],["Harar",42.12,9.31,"Distinct origin. Ask what share is sold on fixed contracts versus spot."],["Addis Ababa",38.74,9.03,"Grading, licensing and shipping paperwork. Ask for one shipment’s full document trail."],["To Djibouti",42.95,11.2,"Ask which port and route the cargo takes, and what delays cost."]]},
+agr:{n:"Agriculture",x:[10e6,6.5e6,1.8e6,2e6,1e6,.7e6,.6e6,.8e6],
+ t:[[30,18],[12,5],[120,200],[45,90],[150,240],[1.5,1]],
+ c:["Yield per hectare and cost per hectare are recorded every season.","Seed, fertilizer and labour costs are tracked per field.","Storage and post-harvest losses are measured."],
+ r:["Rainfall and drought can cut a whole season’s output.","Prices at harvest can fall below cost. Ask about buyer contracts.","Poor storage and transport can waste a large share of the crop."],
+ rd:"Cash is tied up for a season, so long cycles are normal. Look at yield against costs and whether harvest can be stored and sold at a good time.",
+ h:[["Humera",36.6,14.1,"Export-crop area. Ask about buyer contracts and price risk."],["Bahir Dar",37.39,11.59,"Mix of rain-fed and irrigated farming. Ask how much land has reliable water."],["Ziway",38.72,7.93,"Irrigated vegetable and flower area. Ask about cold storage and market access."],["Arsi",39.4,7.6,"Grain area. Ask for yield per hectare compared with the regional average."]]}
+};
+var cur="med",stress=0,vis={};
+var tabs=$("tabs");
+Object.keys(S).forEach(function(k){var b=document.createElement("button");b.className="tab";b.textContent=S[k].n;b.dataset.k=k;tabs.appendChild(b)});
+var inp=$("inputs");
+IDS.forEach(function(id,i){var l=document.createElement("label");l.className="f";l.innerHTML="<span>"+LAB[i]+'</span><input id="'+id+'" type="number" inputmode="decimal">';inp.appendChild(l)});
+// simplified Ethiopia outline (lon,lat)
+var OUT=[[36.6,13.9],[37.9,14.85],[38.6,14.4],[39.8,14.5],[40.3,14],[41.6,13],[42.4,12.5],[41.9,11.8],[42.9,10.9],[43.1,9.9],[44,9],[46,8.2],[47.9,8],[45.5,5.9],[44,4.9],[42,4.2],[41,3.9],[39,3.5],[38,3.6],[37,4.3],[36,4.5],[35.3,5.4],[34.5,6.5],[34.1,7.2],[34.5,8.3],[34.3,9.5],[35,10.8],[35.8,12.2]];
+var P=function(lo,la){return [((lo-33)/15*300).toFixed(1),((15-la)/11.6*232).toFixed(1)]};
+$("land").setAttribute("d","M"+OUT.map(function(p){return P(p[0],p[1]).join(",")}).join("L")+"Z");
+function drawHubs(){
+  var g=$("hubs");g.innerHTML="";
+  S[cur].h.forEach(function(h,i){
+    var p=P(h[1],h[2]),e=document.createElementNS("http://www.w3.org/2000/svg","g");
+    e.setAttribute("class","hub");e.setAttribute("tabindex","0");e.setAttribute("role","button");e.setAttribute("aria-label",h[0]);
+    var left=p[0]>200;
+    e.innerHTML='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="6.5"/><text x="'+(left?p[0]-10:+p[0]+10)+'" y="'+(+p[1]+3)+'" text-anchor="'+(left?"end":"start")+'">'+h[0]+"</text>";
+    var pick=function(){g.querySelectorAll(".hub").forEach(function(x){x.classList.remove("on")});e.classList.add("on");$("info").innerHTML="<b>"+h[0]+"</b>"+h[3]};
+    e.addEventListener("click",pick);
+    e.addEventListener("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();pick()}});
+    g.appendChild(e);
+  });
+  $("info").innerHTML="Tap a point on the map to see what to ask there.";
+}
+function drawChecks(){
+  var w=$("checks");w.innerHTML="";
+  UNI.concat(S[cur].c).forEach(function(t,i){
+    var l=document.createElement("label");l.className="check";
+    l.innerHTML='<input type="checkbox" data-c="'+i+'"><span>'+t+"</span>";w.appendChild(l);
+  });
+}
+function setSector(k){
+  cur=k;
+  document.querySelectorAll(".tab").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.k===k)});
+  IDS.forEach(function(id,i){$(id).value=S[k].x[i]});
+  $("risks").innerHTML=S[k].r.map(function(t){return"<li>"+t+"</li>"}).join("");
+  $("read").textContent="Reading these for "+S[k].n.toLowerCase()+": "+S[k].rd;
+  drawHubs();drawChecks();calc();
+}
+function v(id){var n=parseFloat($(id).value);return isFinite(n)?n:0}
+function st(t,x){return t[3]?(x>=t[0]?"good":(x>=t[1]?"watch":"weak")):(x<=t[0]?"good":(x<=t[1]?"watch":"weak"))}
+function compute(cogsMul){
+  var rev=v("rev"),cogs=v("cogs")*cogsMul,opex=v("opex"),inv=v("inv"),ar=v("ar"),ap=v("ap"),cash=v("cash"),debt=v("debt");
+  var ip=inv/cogs*365,ad=ar/rev*365,pd=ap/cogs*365;
+  var cr=(ap+debt)>0?(cash+inv+ar)/(ap+debt):99;
+  return [(rev-cogs)/rev*100,(rev-cogs-opex)/rev*100,ip,ad,ip+ad-pd,cr];
+}
+function calc(){
+  var s=S[cur],vp,vc=0,n=UNI.length+s.c.length;
+  document.querySelectorAll("[data-c]").forEach(function(c){if(c.checked)vc++});
+  vp=Math.round(vc/n*100);$("vPct").textContent=vp+"%";$("vBar").style.width=vp+"%";
+  if(!(v("rev")>0&&v("cogs")>0)){$("results").innerHTML='<div class="row"><p>Enter revenue and cost of goods sold to see the ratios.</p></div>';$("vTitle").textContent="Waiting for numbers";$("vText").textContent="Fill in revenue and cost of goods sold.";$("pPct").textContent="–";$("pBar").style.width="0%";return}
+  var mul=1+stress/100,base=compute(1),vals=compute(mul);
+  $("stv").textContent=stress+"%";
+  $("stn").textContent=stress?"Operating margin moves from "+fmt(base[1],1)+"% to "+fmt(vals[1],1)+"%. Can this business absorb that?":"Drag to see how a cost shock hits the margins.";
+  var score=0,html="";
+  M.forEach(function(m,i){
+    var t=[s.t[i][0],s.t[i][1],0,m[3]],q=st(t,vals[i]);score+=q==="good"?2:(q==="watch"?1:0);
+    var shown=(i===5&&vals[i]>=99)?"No debts":fmt(vals[i],m[1])+m[2];
+    var tg=(m[3]?"above ":"under ")+s.t[i][0]+(m[2]==="%"?"%":(m[2]==="×"?"×":" days"));
+    html+='<div class="row"><div class="top"><span>'+m[0]+'</span><span class="val">'+shown+'</span></div><div class="mid"><span class="tag '+q+'">'+{good:"Healthy",watch:"Watch",weak:"Weak"}[q]+'</span><span class="note">Target: '+tg+'</span></div><div class="bar"><i class="'+q+'" style="width:'+(q==="good"?100:(q==="watch"?55:20))+'%"></i></div><p>'+m[4]+"</p></div>";
+  });
+  $("results").innerHTML=html;
+  var pp=Math.round(score/12*100);$("pPct").textContent=pp+"%";$("pBar").style.width=pp+"%";
+  var A=pp>=58,B=vp>=67,t,x;
+  if(A&&B){t="Strong candidate";x="Economics and reporting both hold up for this sector. Move to due diligence: audited accounts, contracts, currency exposure and exit terms."}
+  else if(A){t="Profitable on paper, hard to verify";x="The ratios look good, but the business can’t yet prove them. Ask for system-generated reports first."}
+  else if(B){t="Trustworthy numbers, thin returns";x="You can rely on what you see, but margins or cash flow are weak for this sector. Ask what would change them."}
+  else{t="Not ready yet";x="Margins are weak and reporting can’t be verified. Revisit once the data is fixed and the margins are explained."}
+  $("vTitle").textContent=t;$("vText").textContent=x;
+}
+tabs.addEventListener("click",function(e){var b=e.target.closest(".tab");if(b){stress=0;$("st").value=0;setSector(b.dataset.k)}});
+$("st").addEventListener("input",function(){stress=+this.value;calc()});
+document.addEventListener("input",function(e){if(e.target.id!=="st")calc()});
+document.addEventListener("change",calc);
+setSector("med");
+})();
+</script>
+</body>
+</html>
